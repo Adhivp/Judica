@@ -180,69 +180,69 @@
         <p>Already registered? <a href="{% url 'login' %}">Login here</a></p>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-    <script>
-        var cropper;
-        var fixedCropBoxWidth = 200;
-        var fixedCropBoxHeight = 200;
-        document.getElementById('profile-photo-input').addEventListener('change', function(event) {
-            var files = event.target.files;
-            if (files && files.length > 0) {
-                var reader = new FileReader();
-                reader.onload = function(event) {
-                    var img = document.getElementById('cropper-image');
-                    img.src = event.target.result;
-                    document.getElementById('image-cropper-container').style.display = 'block';
-                    if (cropper) {
-                        cropper.destroy();
+<script>
+    var cropper;
+    var fixedCropBoxWidth = 200;
+    var fixedCropBoxHeight = 200;
+    document.getElementById('profile-photo-input').addEventListener('change', function(event) {
+        var files = event.target.files;
+        if (files && files.length > 0) {
+            var reader = new FileReader();
+            reader.onload = function(event) {
+                var img = document.getElementById('cropper-image');
+                img.src = event.target.result;
+                document.getElementById('image-cropper-container').style.display = 'block';
+                if (cropper) {
+                    cropper.destroy();
+                }
+                cropper = new Cropper(img, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    autoCropArea: 1,
+                    movable: false,
+                    zoomable: false,
+                    rotatable: false,
+                    scalable: false,
+                    cropBoxResizable: false,
+                    cropBoxMovable: false,
+                    ready: function () {
+                        var cropper = this.cropper;
+                        cropper.setCropBoxData({
+                            width: fixedCropBoxWidth,
+                            height: fixedCropBoxHeight
+                        });
                     }
-                    cropper = new Cropper(img, {
-                        aspectRatio: 1,
-                        viewMode: 1,
-                        autoCropArea: 1,
-                        movable: false,
-                        zoomable: false,
-                        rotatable: false,
-                        scalable: false,
-                        cropBoxResizable: false,
-                        cropBoxMovable: false,
-                        ready: function () {
-                            var cropper = this.cropper;
-                            cropper.setCropBoxData({
-                                width: fixedCropBoxWidth,
-                                height: fixedCropBoxHeight
-                            });
-                        }
-                    });
-                };
-                reader.readAsDataURL(files[0]);
-            }
+                });
+            };
+            reader.readAsDataURL(files[0]);
+        }
+    });
+
+    document.getElementById('cropper-ok-button').addEventListener('click', function() {
+        var username = document.querySelector('input[name="username"]').value;
+        if (!username) {
+            alert('Please enter a username before cropping the photo.');
+            return;
+        }
+        cropper.getCroppedCanvas({
+            width: fixedCropBoxWidth,
+            height: fixedCropBoxHeight
+        }).toBlob(function(blob) {
+            var newFile = new File([blob], `${username}_profile_photo.jpg`, { type: 'image/jpeg' });
+            var dataTransfer = new DataTransfer();
+            dataTransfer.items.add(newFile);
+            document.getElementById('profile-photo-input').files = dataTransfer.files;
+
+            document.getElementById('image-cropper-container').style.display = 'none';
+            document.querySelector('.container').classList.remove('blur-background');
         });
+    });
 
-        document.getElementById('cropper-ok-button').addEventListener('click', function() {
-    var username = document.querySelector('input[name="username"]').value;
-    if (!username) {
-        alert('Please enter a username before cropping the photo.');
-        return;
-    }
-    cropper.getCroppedCanvas({
-        width: fixedCropBoxWidth,
-        height: fixedCropBoxHeight
-    }).toBlob(function(blob) {
-        var newFile = new File([blob], `${username}_profile_photo.jpg`, { type: 'image/jpeg' });
-        var dataTransfer = new DataTransfer();
-        dataTransfer.items.add(newFile);
-        document.getElementById('profile-photo-input').files = dataTransfer.files;
-
-        // Hide the cropper and remove the blur effect
-        document.getElementById('cropper-overlay').style.display = 'none';
+    document.getElementById('cropper-cancel-button').addEventListener('click', function() {
+        document.getElementById('image-cropper-container').style.display = 'none';
         document.querySelector('.container').classList.remove('blur-background');
     });
-});
+</script>
 
-document.getElementById('cropper-cancel-button').addEventListener('click', function() {
-    document.getElementById('cropper-overlay').style.display = 'none';
-    document.querySelector('.container').classList.remove('blur-background');
-});
-    </script>
 </body>
 </html>
