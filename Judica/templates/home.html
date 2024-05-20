@@ -159,8 +159,8 @@
         <img src="{% static 'images/logo.png' %}" alt="Judica Logo" class="logo">
         <h1>Welcome to Judica</h1>
         <p>Revolutionizing Justice with AI</p>
-        <a href="#login" class="btn">Login</a>
-        <a href="#register" class="btn">Register</a>
+        <a href="{% url 'login' %}" class="btn">Login</a>
+        <a href="{% url 'register' %}" class="btn">Register</a>
         <a href="https://quine.com/vote" class="vote-btn">Vote on Quine</a>
         
         <div class="features">
@@ -184,7 +184,7 @@
 
         <h2>Join Judica Today</h2>
         <p>Experience the future of justice. Sign up now and be part of a revolutionary platform where justice is swift, fair, and impartial.</p>
-        <a href="#register" class="btn">Get Started</a>
+        <a href="{% url 'register' %}" class="btn">Get Started</a>
     </div>
 
     <div class="footer">
