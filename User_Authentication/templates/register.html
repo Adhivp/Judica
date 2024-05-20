@@ -14,6 +14,7 @@
     <meta name="msapplication-TileColor" content="#2d89ef">
     <meta name="msapplication-config" content="{% static 'favicons/browserconfig.xml' %}">
     <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
     <style>
         body {
             margin: 0;
@@ -22,7 +23,6 @@
             background: #0a0f24;
             color: #d1d8e0;
         }
-
         .container {
             text-align: center;
             padding: 20px;
@@ -31,28 +31,23 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
-
         .logo {
             width: 200px;
             margin: 0 auto;
             display: block;
         }
-
         h1 {
             font-size: 2.5em;
             color: #2a5dc7;
             margin-bottom: 20px;
         }
-
         table {
             margin: 0 auto;
             border-collapse: collapse;
         }
-
         th, td {
             padding: 10px;
         }
-
         input[type="text"],
         input[type="email"],
         input[type="password"] {
@@ -64,14 +59,12 @@
             font-size: 1em;
             transition: border-color 0.3s ease;
         }
-
         input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="password"]:focus {
             outline: none;
             border-color: #4dabf7;
         }
-
         button[type="submit"] {
             margin-top: 20px;
             padding: 15px 30px;
@@ -83,23 +76,19 @@
             cursor: pointer;
             transition: background 0.3s ease, transform 0.3s ease;
         }
-
         button[type="submit"]:hover {
             background: linear-gradient(45deg, #8e9eab, #4dabf7);
             transform: translateY(-3px);
         }
-
         p {
             margin-top: 20px;
             font-size: 1.2em;
         }
-
         a {
             color: #4dabf7;
             text-decoration: none;
             transition: color 0.3s ease;
         }
-
         a:hover {
             color: #2a5dc7;
         }
@@ -109,11 +98,37 @@
             border-radius: 5px;
             margin-top: 20px;
         }
-        .error-messages { 
+        .error-message { 
             color: #cc0000; 
             padding: 10px;
             border-radius: 5px;
             margin-top: 20px;
+        }
+        #image-cropper-container {
+            margin-top: 20px;
+            display: none;
+        }
+        #cropper-image {
+            max-width: 100%;
+        }
+        .cropper-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .cropper-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: linear-gradient(45deg, #4dabf7, #8e9eab);
+            color: #ffffff;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+        .cropper-buttons button:hover {
+            background: linear-gradient(45deg, #8e9eab, #4dabf7);
+            transform: translateY(-3px);
         }
     </style>
 </head>
@@ -121,7 +136,7 @@
     <div class="container">
         <img src="{% static 'images/logo.png' %}" alt="Judica Logo" class="logo">
         <h1>Register on Judica</h1>
-        <form action="#" method="POST">
+        <form action="{% url 'register' %}" method="POST" enctype="multipart/form-data" id="registration-form">
             {% csrf_token %}
             <table>
                 <tr>
@@ -136,6 +151,9 @@
                 <tr>
                     <td><input type="password" name="confirm_password" placeholder="Confirm Password" required></td>
                 </tr>
+                <tr>
+                    <td><input type="file" name="profile_photo" id="profile-photo-input" placeholder="Profile Photo" accept="image/*"></td>
+                </tr>
                 <div class="messages">
                     {% for message in messages %}
                         {% if message.tags == 'success' %}
@@ -146,11 +164,85 @@
                     {% endfor %}
                 </div>
                 <tr>
-                    <td><button type="submit">Register</button></td>
+                    <td>
+                        <div id="image-cropper-container">
+                            <img id="cropper-image" src="#">
+                            <div class="cropper-buttons">
+                                <button type="button" id="cropper-ok-button">OK</button>
+                                <button type="button" id="cropper-cancel-button">Cancel</button>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
             </table>
+            <button type="submit" id="submit-button">Register</button>
         </form>
         <p>Already registered? <a href="{% url 'login' %}">Login here</a></p>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script>
+        var cropper;
+        var fixedCropBoxWidth = 200;
+        var fixedCropBoxHeight = 200;
+        document.getElementById('profile-photo-input').addEventListener('change', function(event) {
+            var files = event.target.files;
+            if (files && files.length > 0) {
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    var img = document.getElementById('cropper-image');
+                    img.src = event.target.result;
+                    document.getElementById('image-cropper-container').style.display = 'block';
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                    cropper = new Cropper(img, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        autoCropArea: 1,
+                        movable: false,
+                        zoomable: false,
+                        rotatable: false,
+                        scalable: false,
+                        cropBoxResizable: false,
+                        cropBoxMovable: false,
+                        ready: function () {
+                            var cropper = this.cropper;
+                            cropper.setCropBoxData({
+                                width: fixedCropBoxWidth,
+                                height: fixedCropBoxHeight
+                            });
+                        }
+                    });
+                };
+                reader.readAsDataURL(files[0]);
+            }
+        });
+
+        document.getElementById('cropper-ok-button').addEventListener('click', function() {
+    var username = document.querySelector('input[name="username"]').value;
+    if (!username) {
+        alert('Please enter a username before cropping the photo.');
+        return;
+    }
+    cropper.getCroppedCanvas({
+        width: fixedCropBoxWidth,
+        height: fixedCropBoxHeight
+    }).toBlob(function(blob) {
+        var newFile = new File([blob], `${username}_profile_photo.jpg`, { type: 'image/jpeg' });
+        var dataTransfer = new DataTransfer();
+        dataTransfer.items.add(newFile);
+        document.getElementById('profile-photo-input').files = dataTransfer.files;
+
+        // Hide the cropper and remove the blur effect
+        document.getElementById('cropper-overlay').style.display = 'none';
+        document.querySelector('.container').classList.remove('blur-background');
+    });
+});
+
+document.getElementById('cropper-cancel-button').addEventListener('click', function() {
+    document.getElementById('cropper-overlay').style.display = 'none';
+    document.querySelector('.container').classList.remove('blur-background');
+});
+    </script>
 </body>
 </html>
