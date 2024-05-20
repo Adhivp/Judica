@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from User_Profile.models import *
 
@@ -40,10 +41,54 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('register')
+            return redirect('file_case')
         else:
             messages.error(request, 'Invalid username or password.')
     for message in messages.get_messages(request):
         messages_list.append(message)
     context = {'messages': messages_list}
     return render(request, 'login.html', context)
+
+@login_required
+def file_case(request):
+    user = request.user
+    user_profile = get_object_or_404(UserProfile, user=user)
+    all_users = User.objects.exclude(username__in=['admin', user.username])
+
+    if request.method == 'POST':
+        case_against_id = request.POST.get('case_against')
+        details = request.POST.get('details')
+        document = request.FILES.get('document')
+        
+        if case_against_id and details:
+            case_against = User.objects.get(id=case_against_id)
+            Case.objects.create(
+                filed_by=user,
+                case_against=case_against,
+                details=details,
+                document=document
+            )
+            return redirect('some_view_name')
+
+    context = {
+        'user': user,
+        'user_profile': user_profile,
+        'all_users': all_users
+    }
+    return render(request, 'file_case.html', context)
+
+@login_required
+def user_cases(request):
+    user = request.user
+    filed_cases = Case.objects.filter(filed_by=user)
+    cases_against = Case.objects.filter(case_against=user)
+    
+    user_cases = filed_cases.union(cases_against)
+    
+    context = {
+        'user_profile': user.profile,
+        'user': user,
+        'user_cases': user_cases
+    }
+    
+    return render(request, 'cases.html', context)

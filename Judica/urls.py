@@ -26,4 +26,6 @@ urlpatterns = [
     path('',home,name='home'),
     path('register/', register, name='register'),
     path('login/', user_login, name='login'),
+    path('file-case/',file_case, name='file_case')
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
