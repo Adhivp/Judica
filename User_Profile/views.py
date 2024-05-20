@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from User_Authentication.models import *
+from User_Profile.models import *
 
 def register(request):
     messages_list = []

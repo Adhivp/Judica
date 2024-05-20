@@ -1,4 +1,4 @@
 from django.contrib import admin
-from User_Authentication.models import *
+from User_Profile.models import *
 
 admin.site.register(UserProfile)

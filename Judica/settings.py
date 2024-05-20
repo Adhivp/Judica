@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'User_Authentication',
+    'User_Profile',
     'Judica'
 ]
 MEDIA_URL = '/media/'

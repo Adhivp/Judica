@@ -19,7 +19,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from Judica.views import *
-from User_Authentication.views import *
+from User_Profile.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
