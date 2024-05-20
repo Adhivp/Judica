@@ -68,7 +68,7 @@ def file_case(request):
                 details=details,
                 document=document
             )
-            return redirect('some_view_name')
+            return redirect('user_cases')
 
     context = {
         'user': user,
@@ -80,15 +80,20 @@ def file_case(request):
 @login_required
 def user_cases(request):
     user = request.user
+    user_profile = get_object_or_404(UserProfile, user=user)
     filed_cases = Case.objects.filter(filed_by=user)
     cases_against = Case.objects.filter(case_against=user)
     
     user_cases = filed_cases.union(cases_against)
     
     context = {
-        'user_profile': user.profile,
+        'user_profile': user_profile,
         'user': user,
         'user_cases': user_cases
     }
     
     return render(request, 'cases.html', context)
+
+@login_required
+def user_messages(request):
+    return render (request,'messages.html')

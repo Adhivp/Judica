@@ -20,12 +20,16 @@ from django.conf import settings
 from django.conf.urls.static import static
 from Judica.views import *
 from User_Profile.views import *
+from AI_courtroom.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',home,name='home'),
     path('register/', register, name='register'),
     path('login/', user_login, name='login'),
-    path('file-case/',file_case, name='file_case')
+    path('file-case/',file_case, name='file_case'),
+    path('cases/',user_cases, name='user_cases'),
+    path('messages/',user_messages, name='user_messages'),
+    path('AI_courtroom/',AI_courtroom,name='courtroom')
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
