@@ -83,7 +83,8 @@ def send_message(request, case_id):
 
 def verdict_view(request, courtroom_id):
     # Fetch the courtroom object corresponding to the provided courtroom_id
-    courtroom = Courtroom.objects.get(id=courtroom_id - 1)
+    courtroom = Courtroom.objects.get(id=courtroom_id - 1) #remove the -1 , if your getting different case, verdict / object or page not found error in this view  
+
 
     # Call get_chat_history on the courtroom object to retrieve the chat history
     chat_history = courtroom.get_chat_history()
