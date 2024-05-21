@@ -109,6 +109,18 @@ We welcome contributions to enhance Judica. Please follow these steps:
     ```
 5. Open a pull request.
 
+## Screenshots
+
+<img src="https://github.com/Adhivp/Judica/assets/92261845/054b4507-a944-4625-b854-53ea5df2089d" alt="Screenshot 2024-05-21 at 9 43 15 PM" width="770">
+<img src="https://github.com/Adhivp/Judica/assets/92261845/7ec6fe3d-e031-4568-a9ab-0beee1e7fe19" alt="Image 1">
+<img src="https://github.com/Adhivp/Judica/assets/92261845/a5315474-feb3-46ce-babb-3e60293dfd92" alt="Image 2">
+<img src="https://github.com/Adhivp/Judica/assets/92261845/9773a4d4-2a13-4452-b6a8-66030b024f53" alt="Image 3">
+
+
+
+
+
+
 ## License
 
 Judica is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
