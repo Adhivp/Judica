@@ -176,7 +176,6 @@
     <div class="courtroom">
         <div class="header">
             <div>You are the {% if user == case.filed_by %}Petitioner{% else %}Defendant{% endif %}. Be respectful and concise.</div>
-            <img src="{% static 'images/logo.png' %}" alt="Judica AI Logo">
         </div>
         <a href="{% url 'user_cases' %}" class="back-button">Back to Cases</a>
         <div class="participants">
