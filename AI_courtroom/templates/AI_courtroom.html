@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,11 +16,10 @@
     <meta name="theme-color" content="#ffffff">
     <style>
         .logo {
-    width: 100px; 
-    height: 100px; 
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7)); 
-}
-
+            width: 100px; 
+            height: 100px; 
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7)); 
+        }
         body {
             font-family: Arial, sans-serif;
             background-color: #0a0f24;
@@ -74,6 +72,13 @@
             width: 80px;
             height: 80px;
             margin-bottom: 5px;
+        }
+        .participantjudica {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #d1d8e0;
+            position: relative;
         }
         .participantjudica img {
             border-radius: 50%;
@@ -156,7 +161,7 @@
             margin-left: 10px;
             margin-right: 0;
         }
-        .back-button {
+        .back-button, .verdict-button {
             display: inline-block;
             margin-bottom: 20px;
             padding: 10px 20px;
@@ -167,8 +172,12 @@
             text-align: center;
             width: 150px;
         }
-        .back-button:hover {
+        .back-button:hover, .verdict-button:hover {
             background: linear-gradient(to right, #f06595, #ff6b6b);
+        }
+        .verdict-button {
+            position: absolute;
+            bottom: -60px;
         }
     </style>
 </head>
@@ -192,6 +201,7 @@
                     <div>Judica</div>
                     <div>AI Judge</div>
                 </div>
+                <a href="{% url 'verdict_view' case.id %}" class="verdict-button">Final Verdict</a>
             </div>
             <div class="participant">
                 <img src="{% if case.case_against.userprofile.profile_photo %}{{ case.case_against.userprofile.profile_photo.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}" alt="Defendant">
@@ -215,7 +225,7 @@
             {% endfor %}
         </div>
         <form id="messageForm" method="post" action="{% url 'send_message' case.id %}">
-            {% csrf_token %}
+            {%csrf_token %}
             <div class="input-section">
                 <input type="text" name="message" placeholder="Your message here" id="userMessage">
                 <button type="submit">Send</button>
@@ -230,3 +240,4 @@
     });
 </script>
 </html>
+

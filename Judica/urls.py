@@ -34,5 +34,6 @@ urlpatterns = [
     path('messages/',user_messages, name='user_messages'),
     path('courtroom/<int:case_id>/', courtroom_view, name='courtroom_view'),
     path('courtroom/<int:case_id>/send_message/', send_message, name='send_message'),
+    path('verdict/<int:courtroom_id>/', verdict_view, name='verdict_view')
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
