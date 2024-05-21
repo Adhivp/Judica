@@ -41,7 +41,7 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('file_case')
+            return redirect('user_cases')
         else:
             messages.error(request, 'Invalid username or password.')
     for message in messages.get_messages(request):

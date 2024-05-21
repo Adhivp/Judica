@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
 from Judica.views import *
 from User_Profile.views import *
 from AI_courtroom.views import *
@@ -27,6 +28,7 @@ urlpatterns = [
     path('',home,name='home'),
     path('register/', register, name='register'),
     path('login/', user_login, name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
     path('file-case/',file_case, name='file_case'),
     path('cases/',user_cases, name='user_cases'),
     path('messages/',user_messages, name='user_messages'),

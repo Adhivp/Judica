@@ -149,13 +149,25 @@
             cursor: pointer;
             border-radius: 5px;
         }
+        .red-btn {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .red-btn:hover {
+            background-color: #ff3333;
+        }
 
         .file-msg {
             margin-top: 10px;
             color: #d1d8e0;
         }
 
-        button[type="submit"] {
+        .submit-button {
             background: linear-gradient(to right, #4dabf7, #8e9eab);
             color: white;
             border: none;
@@ -182,6 +194,11 @@
                     <li><a href="{% url 'user_messages' %}" class="report-btn">Messages</a></li>
                 </ul>
             </nav>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="red-btn">Logout</button>
+            </form>
+
         </div>
         <div class="main-content">
             <h1>File a Case</h1>
@@ -209,7 +226,7 @@
                         <input class="file-input" type="file" name="document" style="display: none;">
                     </div>
                 </div>
-                <button type="submit">Submit Case</button>
+                <button type="submit" class = "submit-button">Submit Case</button>
             </form>
         </div>
     </div>

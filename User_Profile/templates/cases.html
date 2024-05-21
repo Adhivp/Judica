@@ -138,6 +138,18 @@
         .btn:hover {
             background-color: #3578e5;
         }
+        .red-btn {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .red-btn:hover {
+            background-color: #ff3333;
+        }
     </style>
 </head>
 <body>
@@ -157,6 +169,10 @@
                     <li><a href="{% url 'user_messages' %}" class="report-btn">Messages</a></li>
                 </ul>
             </nav>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="red-btn">Logout</button>
+            </form>
         </div>
         <div class="main-content">
             <h1>User Cases</h1>
