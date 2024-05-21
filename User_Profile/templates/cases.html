@@ -29,7 +29,7 @@
         }
 
         .sidebar {
-            width: 170px;
+            width: 200px;
             background-color: #242731;
             padding: 20px;
             display: flex;
@@ -125,6 +125,30 @@
             color: #d1d8e0;
         }
 
+        .case-details p {
+            margin: 5px 0;
+        }
+
+        .case-details strong {
+            color: #2a5dc7;
+        }
+
+        .status-ongoing {
+            color: #f1c40f; /* Yellow for ongoing status */
+        }
+
+        .status-completed {
+            color: #2ecc71; /* Green for completed status */
+        }
+
+        .verdict-guilty {
+            color: #e74c3c; /* Red for guilty verdict */
+        }
+
+        .verdict-not-guilty {
+            color: #2ecc71; /* Green for not guilty verdict */
+        }
+
         .btn {
             display: inline-block;
             background-color: #4dabf7;
@@ -187,7 +211,10 @@
                         {% if case.document %}
                         <p><strong>Document:</strong> <a href="{{ case.document.url }}">{{ case.document.name }}</a></p>
                         {% endif %}
+                        <p><strong>Status:</strong> <span class="status-{{ case.status }}">{{ case.status|capfirst }}</span></p>
+                        <p><strong>Verdict:</strong> <span class="verdict-{{ case.verdict|lower }}">{{ case.verdict }}</span></p>
                         <p><strong>Created At:</strong> {{ case.created_at }}</p>
+                        
                         <a href="{% url 'courtroom_view' case.id %}" class="btn">Go to Courtroom</a>
                     </div>
                 </li>

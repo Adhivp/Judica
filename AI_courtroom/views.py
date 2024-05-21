@@ -65,6 +65,10 @@ def verdict_view(request, courtroom_id):
     
     # Extract the 'llm_response' from the model's response dictionary
     llm_response = response.get('llm_response')
+    case = courtroom.case
+    case.status = 'completed'
+    case.verdict = llm_response
+    case.save()
 
     # Render the result in an HTML template
     return render(request, 'final_verdict.html', {'llm_response': llm_response})
