@@ -1,3 +1,5 @@
 from django.contrib import admin
+from AI_courtroom.models import *
 
-# Register your models here.
+admin.site.register(Courtroom)
+admin.site.register(ChatHistory)

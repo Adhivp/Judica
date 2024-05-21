@@ -172,14 +172,12 @@
                         <p><strong>Document:</strong> <a href="{{ case.document.url }}">{{ case.document.name }}</a></p>
                         {% endif %}
                         <p><strong>Created At:</strong> {{ case.created_at }}</p>
+                        <a href="{% url 'courtroom_view' case.id %}" class="btn">Go to Courtroom</a>
                     </div>
                 </li>
                 {% endfor %}
             </ul>
-            <a href="{% url 'courtroom' %}" class="btn">Go to Court Room</a>
-            <!-- You may need to adjust the URL for the courtroom -->
         </div>
     </div>
-    <!-- JavaScript and other scripts if needed -->
 </body>
 </html>

@@ -30,6 +30,7 @@ urlpatterns = [
     path('file-case/',file_case, name='file_case'),
     path('cases/',user_cases, name='user_cases'),
     path('messages/',user_messages, name='user_messages'),
-    path('AI_courtroom/',AI_courtroom,name='courtroom')
+    path('courtroom/<int:case_id>/', courtroom_view, name='courtroom_view'),
+    path('courtroom/<int:case_id>/send_message/', send_message, name='send_message'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
