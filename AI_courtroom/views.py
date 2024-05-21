@@ -16,15 +16,16 @@ def courtroom_view(request, case_id):
 def send_message(request, case_id):
     if request.method == 'POST':
         case = get_object_or_404(Case, id=case_id)
-        sender = 'Petitioner' if request.user == case.filed_by else 'Defendant'
+        sender = request.user
 
         message = request.POST.get('message')
         if message:
             ChatHistory.objects.create(
                 courtroom=case.courtroom,
                 sender=sender,
+                sender_role='Petitioner' if sender == case.filed_by else 'Defendant',
                 message=message,
                 timestamp=timezone.now()
             )
-            return JsonResponse({'status': 'success'})
-    return JsonResponse({'status': 'failed'})
+            return redirect('courtroom_view',case_id = case_id)
+    return redirect('courtroom_view',case_id = case_id)

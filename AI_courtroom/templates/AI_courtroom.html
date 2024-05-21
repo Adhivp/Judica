@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,6 +16,12 @@
     <meta name="msapplication-config" content="{% static 'favicons/browserconfig.xml' %}">
     <meta name="theme-color" content="#ffffff">
     <style>
+        .logo {
+    width: 100px; 
+    height: 100px; 
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7)); 
+}
+
         body {
             font-family: Arial, sans-serif;
             background-color: #0a0f24;
@@ -56,10 +63,26 @@
             justify-content: space-between;
             margin-bottom: 20px;
         }
-        .participants div {
-            text-align: left;
-            font-size: 14px;
-            line-height: 1.6;
+        .participant {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #d1d8e0;
+        }
+        .participant img {
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            margin-bottom: 5px;
+        }
+        .participantjudica img {
+            border-radius: 50%;
+            width: 110px;
+            height: 110px;
+            margin-bottom: 5px;
+        }
+        .participant-details {
+            text-align: center;
         }
         .chat {
             background-color: #12122c;
@@ -157,91 +180,54 @@
         </div>
         <a href="{% url 'user_cases' %}" class="back-button">Back to Cases</a>
         <div class="participants">
-            <div>
-                <div>{{ case.filed_by.username }}</div>
-                <div>Petitioner</div>
+            <div class="participant">
+                <img src="{% if case.filed_by.userprofile.profile_photo %}{{ case.filed_by.userprofile.profile_photo.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}" alt="Petitioner">
+                <div class="participant-details">
+                    <div>{{ case.filed_by.username }}</div>
+                    <div>Petitioner</div>
+                </div>
             </div>
-            <div>
-                <div>{{ case.case_against.username }}</div>
-                <div>Defendant</div>
+            <div class="participantjudica">
+                <img src="{% static 'images/logo.png' %}" alt="Judica AI" class="logo">
+                <div class="participant-details">
+                    <div>Judica</div>
+                    <div>AI Judge</div>
+                </div>
             </div>
-            <div>
-                <div>Judica</div>
-                <div>AI Judge</div>
+            <div class="participant">
+                <img src="{% if case.case_against.userprofile.profile_photo %}{{ case.case_against.userprofile.profile_photo.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}" alt="Defendant">
+                <div class="participant-details">
+                    <div>{{ case.case_against.username }}</div>
+                    <div>Defendant</div>
+                </div>
             </div>
         </div>
         <div class="chat">
             {% for chat in case.courtroom.chats.all %}
             <div class="message{% if chat.sender_role == 'Petitioner' and chat.sender == user or chat.sender_role == 'Defendant' and chat.sender == user %} right{% endif %}">
-                    <img src="{% if chat.sender_role == 'Petitioner' %}{{ case.filed_by.userprofile.profile_photo.url }}{% elif chat.sender_role == 'Defendant' %}{{ case.case_against.userprofile.profile_photo.url }}{% else %}{% static 'images/logo.png' %}{% endif %}" alt="{{ chat.sender_role }}">
-                    <div class="message-content">
-                        <div class="message-header">{{ chat.sender_role }}</div>
-                        <div class="message-body">
-                            <p>{{ chat.message }}</p>
-                        </div>
+                <img src="{% if chat.sender_role == 'Petitioner' %}{{ case.filed_by.userprofile.profile_photo.url }}{% elif chat.sender_role == 'Defendant' %}{{ case.case_against.userprofile.profile_photo.url }}{% else %}{% static 'images/logo.png' %}{% endif %}" alt="{{ chat.sender_role }}">
+                <div class="message-content">
+                    <div class="message-header">{{ chat.sender_role }}</div>
+                    <div class="message-body">
+                        <p>{{ chat.message }}</p>
                     </div>
                 </div>
+            </div>
             {% endfor %}
         </div>
-        <div class="input-section">
-            <input type="text" placeholder="Your message here" id="userMessage">
-            <button onclick="sendMessage({{ case.id }})">Send</button>
-        </div>
+        <form id="messageForm" method="post" action="{% url 'send_message' case.id %}">
+            {% csrf_token %}
+            <div class="input-section">
+                <input type="text" name="message" placeholder="Your message here" id="userMessage">
+                <button type="submit">Send</button>
+            </div>
+        </form>
     </div>
-
-    <script>
-        function sendMessage(caseId) {
-            const userMessage = document.getElementById('userMessage').value;
-            if (userMessage.trim() !== '') {
-                const chat = document.querySelector('.chat');
-                const csrfToken = '{{ csrf_token }}';
-
-                fetch(`/courtroom/${caseId}/send_message/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrfToken,
-                    },
-                    body: JSON.stringify({
-                        message: userMessage
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        const newMessage = document.createElement('div');
-                        newMessage.classList.add('message', 'right');
-
-                        const messageImg = document.createElement('img');
-                        messageImg.src = '{{ user.userprofile.profile_photo.url }}';
-                        messageImg.alt = 'You';
-
-                        const messageContent = document.createElement('div');
-                        messageContent.classList.add('message-content');
-
-                        const messageHeader = document.createElement('div');
-                        messageHeader.classList.add('message-header');
-                        messageHeader.textContent = 'You';
-
-                        const messageBody = document.createElement('div');
-                        messageBody.classList.add('message-body');
-                        const messageText = document.createElement('p');
-                        messageText.textContent = userMessage;
-                        messageBody.appendChild(messageText);
-
-                        messageContent.appendChild(messageHeader);
-                        messageContent.appendChild(messageBody);
-
-                        newMessage.appendChild(messageImg);
-                        newMessage.appendChild(messageContent);
-                        chat.appendChild(newMessage);
-
-                        document.getElementById('userMessage').value = '';
-                        chat.scrollTop = chat.scrollHeight;
-                    }
-                });
-            }
-        }
-    </script>
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const chat = document.querySelector('.chat');
+        chat.scrollTop = chat.scrollHeight;
+    });
+</script>
 </html>
