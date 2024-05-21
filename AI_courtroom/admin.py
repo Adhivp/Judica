@@ -3,3 +3,4 @@ from AI_courtroom.models import *
 
 admin.site.register(Courtroom)
 admin.site.register(ChatHistory)
+admin.site.register(LLMModel)

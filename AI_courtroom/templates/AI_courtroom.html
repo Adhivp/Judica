@@ -199,6 +199,7 @@
                 <img src="{% static 'images/logo.png' %}" alt="Judica AI" class="logo">
                 <div class="participant-details">
                     <div>Judica</div>
+                    <div>{{ first_llm_model }}</div>
                     <div>AI Judge</div>
                 </div>
                 <a href="{% url 'verdict_view' case.id %}" class="verdict-button">Final Verdict</a>
