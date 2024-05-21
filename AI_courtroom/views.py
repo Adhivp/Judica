@@ -6,7 +6,6 @@ from django.utils import timezone
 from django.shortcuts import render
 from .models import Courtroom
 from llmware.models import ModelCatalog
-from .models import LLMModel
 import os
 
 @login_required
@@ -22,7 +21,9 @@ def courtroom_view(request, case_id):
     
     # Check if the last chat message was not sent by AI
     if last_chat.sender_role != 'AI':
-        query = '''Based on the last message in the courtroom:
+        query = '''
+        Here is the last message {},sender role{}
+        Based on the last message in the courtroom:
 
 1. If the last message is regarding evidence:
     - Notify the defendant to respond.
@@ -30,11 +31,9 @@ def courtroom_view(request, case_id):
 2. If there's no recent activity:
     - Check if the petitioner has more evidence available.
     - If yes, prompt the petitioner to submit additional evidence.
-    - If no recent activity from the petitioner as well:
-        - Check if both the petitioner and defendant are done with their replies then say them to click final verdict.
-Here is the last message {},sender role{},name{}'''.format(last_chat.message,last_chat.sender_role,last_chat.sender.username)
-        first_llm_model = LLMModel.objects.first()
-        model = ModelCatalog().load_model('tiny-llama-chat-gguf', temperature=0.0, sample=True)
+    - Check if both the petitioner and defendant are done with their replies then say them to click final verdict.
+'''.format(last_chat.message,last_chat.sender_role)
+        model = ModelCatalog().load_model('bling-phi-3-gguf', temperature=0.0, sample=True)
         context = '''In India, the process of judicial decision-making is an intricate interplay of legal doctrines, constitutional principles, statutory enactments, and judicial precedents, all orchestrated to achieve the ultimate goal of justice. Judges, seated as the guardians of the law, meticulously navigate through this labyrinthine legal landscape, weighing evidence, scrutinizing arguments, and interpreting laws to render impartial and equitable judgments. At the heart of this process lies the Constitution of India, serving as the supreme legal document that not only delineates the powers and functions of the judiciary but also enshrines fundamental rights and principles that guide judicial deliberations. Within the courtroom, the adversarial system unfolds, with opposing parties engaging in legal combat before a neutral arbiter—the judge. Armed with legal expertise and a keen understanding of the law, judges preside over proceedings, ensuring procedural fairness, and adjudicating disputes with unwavering fidelity to the rule of law.
 
     Key legal principles, such as the doctrine of precedent, shape judicial decision-making, requiring judges to adhere to prior judicial rulings and established legal principles. This principle of stare decisis fosters consistency and coherence in the application of law, ensuring predictability and stability in the legal system. Moreover, judges engage in statutory interpretation, delving into the legislative intent behind enactments to discern the law's true meaning and effect. Laws such as the Indian Penal Code, Criminal Procedure Code, and Civil Procedure Code form the bedrock of legal adjudication, providing the substantive and procedural framework for addressing civil and criminal disputes.
@@ -84,21 +83,20 @@ def send_message(request, case_id):
 
 def verdict_view(request, courtroom_id):
     # Fetch the courtroom object corresponding to the provided courtroom_id
-    courtroom = Courtroom.objects.get(id=courtroom_id)
+    courtroom = Courtroom.objects.get(id=courtroom_id - 1)
 
     # Call get_chat_history on the courtroom object to retrieve the chat history
     chat_history = courtroom.get_chat_history()
-
     # Prepare the query to the model
-    first_llm_model = LLMModel.objects.first()
-    model = ModelCatalog().load_model('tiny-llama-chat-gguf', temperature=0.0, sample=True)
-    query = '''As an Expert Judge, your ultimate task is to give a proper formal verdict. Based on the provided case details below, give a final verdict in the format:
+    model = ModelCatalog().load_model("bling-phi-3-gguf", temperature=0.0, sample=True)
+    query = f'''As an Expert Judge, your ultimate task is to give a proper formal verdict. Based on the provided case details below, give a final verdict in the format:
 
      [Final Verdict: (Guilty/Not Guilty Defendant), Insert your final decision here, including any reasoning or justification for your ruling.]
 
     Case Details_Format:
         # 'chats' contains a list of chat messages within the corresponding courtroom.
-        'chats': {}'''.format(chat_history)
+        'chats': {chat_history}'''
+
     
     # Additional context
     context = '''In India, the process of judicial decision-making is an intricate interplay of legal doctrines, constitutional principles, statutory enactments, and judicial precedents, all orchestrated to achieve the ultimate goal of justice. Judges, seated as the guardians of the law, meticulously navigate through this labyrinthine legal landscape, weighing evidence, scrutinizing arguments, and interpreting laws to render impartial and equitable judgments. At the heart of this process lies the Constitution of India, serving as the supreme legal document that not only delineates the powers and functions of the judiciary but also enshrines fundamental rights and principles that guide judicial deliberations. Within the courtroom, the adversarial system unfolds, with opposing parties engaging in legal combat before a neutral arbiter—the judge. Armed with legal expertise and a keen understanding of the law, judges preside over proceedings, ensuring procedural fairness, and adjudicating disputes with unwavering fidelity to the rule of law.
@@ -111,13 +109,13 @@ def verdict_view(request, courtroom_id):
 
     # Get the model's response
     response = model.inference(query, add_context=context)
-    
+    print(response)
     # Extract the 'llm_response' from the model's response dictionary
-    llm_response = response.get('tiny-llama-chat-gguf')
+    llm_response = response.get('llm_response')
     case = courtroom.case
     case.status = 'completed'
     case.verdict = llm_response
     case.save()
-
+    print(llm_response)
     # Render the result in an HTML template
-    return render(request, 'final_verdict.html', {'llm_response': llm_response},{'first_llm_model':first_llm_model})
+    return render(request, 'final_verdict.html', {'llm_response': llm_response})

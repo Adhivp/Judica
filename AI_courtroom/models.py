@@ -49,31 +49,3 @@ class ChatHistory(models.Model):
     def __str__(self):
         return f"Chat in Courtroom {self.courtroom.id} by {self.sender} at {self.timestamp}"
 
-class LLMModel(models.Model):
-    OPTIONS = (
-    ('tiny-llama-chat-gguf', 'tiny-llama-chat-gguf'),
-    ('bling-1b', 'bling-1b'),
-    ('bling-falcon-1.3b', 'bling-falcon-1.3b'),
-    ('bling-sheared-llama-1.3b', 'bling-sheared-llama-1.3b'),
-    ('bling-red-pajamas-3b', 'bling-red-pajamas-3b'),
-    ('bling-sheared-llama-2.7b', 'bling-sheared-llama-2.7b'),
-    ('bling-stablelm-3b', 'bling-stablelm-3b'),
-    ('bling-cerebras-1.3b', 'bling-cerebras-1.3b'),
-    ('bling-tiny-llama-1b', 'bling-tiny-llama-1b'),
-    ('dragon-yi-6b', 'dragon-yi-6b'),
-    ('dragon-stablelm-7b', 'dragon-stablelm-7b'),
-    ('dragon-mistral-7b', 'dragon-mistral-7b'),
-    ('dragon-red-pajama-7b', 'dragon-red-pajama-7b'),
-    ('dragon-deci-6b', 'dragon-deci-6b'),
-    ('dragon-falcon-7b', 'dragon-falcon-7b'),
-    ('dragon-llama-7b', 'dragon-llama-7b'),
-    ('dragon-deci-7b', 'dragon-deci-7b'),
-    ('bling-phi-3', 'bling-phi-3'),
-    ('bling-phi-3-gguf', 'bling-phi-3-gguf'),
-)
-
-
-    text_option = models.CharField(max_length=50, choices=OPTIONS)
-
-    def __str__(self):
-        return self.text_option
