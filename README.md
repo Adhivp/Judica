@@ -1,7 +1,6 @@
-"""
 # Judica - AI Judge
 <p align="center">
-    <img src="https://github.com/Adhivp/Judica/blob/main/judica/static/images/logo.png" width=300 />
+    <img src="https://github.com/Adhivp/Judica/blob/master/Judica/static/images/logo.png" width=300 />
 </p>
 <p align="center">
     <p align="center">
@@ -69,12 +68,12 @@ To get started with Judica, follow these steps:
     python manage.py runserver
     ```
 4. **makemigrations and migrate**:
-    '''bash
+    ```bash
     python manage.py makmigrations
-    '''
-    '''bash
+    ```
+    ```bash
     python manage.py migrate
-    '''
+    ```
 5. **Access the Application**:
     Open your browser and navigate to \`http://localhost:8000\` to view the Judica homepage.
 
