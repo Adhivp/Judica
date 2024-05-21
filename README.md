@@ -43,7 +43,7 @@ https://youtu.be/pJHGqlmsidE
 - **Secure and Private**: All data is encrypted to ensure privacy and security.
 - **User-Friendly Interface**: A chat-like interface allows for smooth and intuitive navigation.
 
-views.py` file. This code handles the logic for AI-powered judgments and dispute resolutions.
+`AI_courtroom/views.py` file. This code handles the logic for AI-powered judgments(LLMWARE) and dispute resolutions.
 
 
 ## Getting Started
