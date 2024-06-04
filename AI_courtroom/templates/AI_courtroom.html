@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Virtual Courtroom</title>
-    {% load static %}
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicons/apple-touch-icon.png' %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicons/favicon-16x16.png' %}">
-    <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}">
-    <link rel="mask-icon" href="{% static 'favicons/safari-pinned-tab.svg' %}" color="#5bbad5">
-    <link rel="shortcut icon" href="{% static 'favicons/favicon.ico' %}">
-    <meta name="msapplication-TileColor" content="#2d89ef">
-    <meta name="msapplication-config" content="{% static 'favicons/browserconfig.xml' %}">
-    <meta name="theme-color" content="#ffffff">
-    <style>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AI courtroom </title>
+        {% load static %}
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicons/apple-touch-icon.png' %}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicons/favicon-16x16.png' %}">
+        <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}">
+        <link rel="mask-icon" href="{% static 'favicons/safari-pinned-tab.svg' %}" color="#5bbad5">
+        <link rel="shortcut icon" href="{% static 'favicons/favicon.ico' %}">
+        <meta name="msapplication-TileColor" content="#2d89ef">
+        <meta name="msapplication-config" content="{% static 'favicons/browserconfig.xml' %}">
+        <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="{% static 'shepherd/shepherd.css' %}">
+<style>
         .logo {
             width: 100px; 
             height: 100px; 
@@ -161,7 +162,7 @@
             margin-left: 10px;
             margin-right: 0;
         }
-        .back-button, .verdict-button {
+        .back-button, .verdict-button, #startTourButton {
             display: inline-block;
             margin-bottom: 20px;
             padding: 10px 20px;
@@ -172,17 +173,44 @@
             text-align: center;
             width: 150px;
         }
-        .back-button:hover, .verdict-button:hover {
+        .back-button:hover, .verdict-button:hover, #startTourButton:hover {
             background: linear-gradient(to right, #f06595, #ff6b6b);
+}
+
+.verdict-button {
+position: absolute;
+bottom: -60px;
+}
+
+
+        .start-tour-section p {
+            display: inline-block;
+            background-color: #12122c; 
+            border-radius: 8px;  
+            padding: 10px 20px;
+            margin-bottom: 0; 
         }
-        .verdict-button {
-            position: absolute;
-            bottom: -60px;
+
+        .start-tour-section button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(to right, #4dabf7, #8e9eab);
+            color: white;
+            cursor: pointer;
+        }
+
+        .start-tour-section button:hover {
+            background: linear-gradient(to right, #f06595, #ff6b6b);
         }
     </style>
 </head>
 <body>
     <div class="courtroom">
+        <div class="start-tour-section">
+            <p>Are you new to the AI courtroom? Here is a guide/tour to get started.</p> <!-- Added message -->
+            <button id="startTourButton">Start Virtual Tour</button>
+        </div>
         <div class="header">
             <div>You are the {% if user == case.filed_by %}Petitioner{% else %}Defendant{% endif %}. Be respectful and concise.</div>
         </div>
@@ -225,7 +253,7 @@
             {% endfor %}
         </div>
         <form id="messageForm" method="post" action="{% url 'send_message' case.id %}">
-            {%csrf_token %}
+            {% csrf_token %}
             <div class="input-section">
                 <input type="text" name="message" placeholder="Your message here" id="userMessage">
                 <button type="submit">Send</button>
@@ -233,11 +261,90 @@
         </form>
     </div>
 </body>
+<script src="{% static 'shepherd/shepherd.min.js' %}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const chat = document.querySelector('.chat');
         chat.scrollTop = chat.scrollHeight;
+
+        const tour = new Shepherd.Tour({
+            useModalOverlay: true,
+            defaultStepOptions: {
+                exitOnEsc: true,
+                classes: 'shepherd-theme-arrows',
+            },
+            steps: [
+                {
+                    title: 'Step 1 of 4: Welcome to the Virtual Courtroom!',
+                    text: 'This is where you can experience a virtual courtroom session.',
+                    attachTo: {
+                        element: '.courtroom',
+                        on: 'bottom'
+                    },
+                    buttons: [
+                        {
+                            text: 'Next',
+                            action: function() {
+                                tour.next(); 
+                            },
+                        },
+                    ],
+                },
+                {
+                    title: 'Step 2 of 4: Participants',
+                    text: 'Here, you can see the participants involved in the courtroom session.',
+                    attachTo: {
+                        element: '.participants',
+                        on: 'bottom'
+                    },
+                    buttons: [
+                        {
+                            text: 'Next',
+                            action: function() {
+                                tour.next(); 
+                            },
+                        },
+                    ],
+                },
+                {
+                    title: 'Step 3 of 4: Chat Section',
+                    text: 'This is where you can communicate with other participants through messages.',
+                    attachTo: {
+                        element: '.chat',
+                        on: 'bottom'
+                    },
+                    buttons: [
+                        {
+                            text: 'Next',
+                            action: function() {
+                                tour.next(); 
+                            },
+                        },
+                    ],
+                },
+                {
+                    title: 'Step 4 of 4: Send Message',
+                    text: 'Type your message here and click Send to communicate.',
+                    attachTo: {
+                        element: '#userMessage',
+                        on: 'bottom'
+                    },
+                    buttons: [
+                        {
+                            text: 'End Tour',
+                            action: function() {
+                                tour.complete(); 
+                            },
+                        },
+                    ],
+                },
+            ],
+        });
+
+        document.getElementById('startTourButton').addEventListener('click', function() {
+            
+            tour.start();
+        });
     });
 </script>
 </html>
-
